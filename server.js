@@ -25,39 +25,28 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model("Person", personSchema);
 
-app.get("/persons", async (req, res) => {
+app.get("/api/persons", async (req, res) => {
   const persons = await Person.find();
   res.json(persons);
 });
 
-app.get("/persons/:id", async (req, res) => {
+app.get("/api/persons/:id", async (req, res) => {
   const { id } = req.params;
-
-  if (!mongoose.isValidObjectId(id)) {
-    return res.status(400).json({ message: "Invalid ID format" });
-  }
-
-  try {
-    const person = await Person.findById(id);
-    if (!person) return res.status(404).json({ message: "Not found" });
-    res.json(person);
-  } catch (err) {
-    res.status(500).json({ message: "Internal error" });
-  }
+  if (!mongoose.isValidObjectId(id)) return res.status(400).json({ message: "Invalid ID format" });
+  const person = await Person.findById(id);
+  if (!person) return res.status(404).json({ message: "Not found" });
+  res.json(person);
 });
 
-app.post("/persons", async (req, res) => {
+app.post("/api/persons", async (req, res) => {
   const newPerson = new Person(req.body);
   await newPerson.save();
   res.status(201).json(newPerson);
 });
 
-app.put("/persons/:id", async (req, res) => {
+app.put("/api/persons/:id", async (req, res) => {
   try {
-    const updated = await Person.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const updated = await Person.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!updated) return res.status(404).json({ message: "Not found" });
     res.json(updated);
   } catch (err) {
@@ -65,7 +54,7 @@ app.put("/persons/:id", async (req, res) => {
   }
 });
 
-app.delete("/persons/:id", async (req, res) => {
+app.delete("/api/persons/:id", async (req, res) => {
   await Person.findByIdAndDelete(req.params.id);
   res.status(204).end();
 });
