@@ -1,28 +1,24 @@
+// server.js
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+
+// ✅ โหลด .env ก่อนใช้ process.env
+dotenv.config();
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
-
-const dotenv = require("dotenv");
-dotenv.config();
-
-
-const mongoose = require("mongoose");
-
-
+// ✅ เชื่อม MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected!"))
   .catch((err) => console.error("❌ MongoDB error:", err));
 
-
+// ✅ สร้าง Schema
 const personSchema = new mongoose.Schema({
   name: String,
   avatar: String,
@@ -32,12 +28,13 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model("Person", personSchema);
 
+// ✅ Routes
 app.get("/persons", async (req, res) => {
   const persons = await Person.find();
   res.json(persons);
 });
 
-app.get('/persons/:id', async (req, res) => {
+app.get("/persons/:id", async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.isValidObjectId(id)) {
@@ -46,12 +43,10 @@ app.get('/persons/:id', async (req, res) => {
 
   try {
     const person = await Person.findById(id);
-    if (!person) {
-      return res.status(404).json({ message: "Person not found" });
-    }
+    if (!person) return res.status(404).json({ message: "Not found" });
     res.json(person);
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+  } catch (err) {
+    res.status(500).json({ message: "Internal error" });
   }
 });
 
@@ -63,28 +58,15 @@ app.post("/persons", async (req, res) => {
 
 app.put("/persons/:id", async (req, res) => {
   try {
-    const existingPerson = await Person.findById(req.params.id);
-
-    if (!existingPerson) {
-      return res.status(404).json({ message: "Person not found" });
-    }
-
-    const updatedData = {
-      name: req.body.name || existingPerson.name,
-      avatar: req.body.avatar || existingPerson.avatar,
-      city: req.body.city || existingPerson.city,
-      description: req.body.description || existingPerson.description,
-    };
-
-    const updatedPerson = await Person.findByIdAndUpdate(
+    const updated = await Person.findByIdAndUpdate(
       req.params.id,
-      updatedData,
+      req.body,
       { new: true, runValidators: true }
     );
-
-    res.json(updatedPerson);
-  } catch (error) {
-    res.status(500).json({ message: "Update failed", error });
+    if (!updated) return res.status(404).json({ message: "Not found" });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: "Update failed", error: err });
   }
 });
 
@@ -93,6 +75,7 @@ app.delete("/persons/:id", async (req, res) => {
   res.status(204).end();
 });
 
+// ✅ Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
