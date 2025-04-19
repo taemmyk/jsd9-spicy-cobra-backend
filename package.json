@@ -1,15 +1,15 @@
 {
   "name": "jsd9",
   "version": "1.0.0",
-  "description": "Backend for employee CRUD app",
-  "main": "server.js",
-  "type": "commonjs",
+  "main": "index.js",
+  
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "author": "toey-jsd9",
   "license": "ISC",
+  "description": "",
   "dependencies": {
     "axios": "^1.8.4",
     "body-parser": "^2.2.0",
@@ -18,16 +18,12 @@
     "express": "^5.1.0",
     "mongoose": "^8.13.2"
   },
-  "devDependencies": {
-    "nodemon": "^3.1.9"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/ToeyJSD9/backend.git"
+    "url": "git+https://github.com/ToeyJSD9/backend.git"
   },
+  "keywords": [],
   "bugs": {
     "url": "https://github.com/ToeyJSD9/backend/issues"
   },
