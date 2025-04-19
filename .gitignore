@@ -45,3 +45,5 @@ jest-test-results.json
 **/docker-compose.yml
 # Swagger generated files
 swagger-ui/
+# .gitignore
+.env

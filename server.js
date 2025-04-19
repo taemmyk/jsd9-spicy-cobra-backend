@@ -1,62 +1,89 @@
-import express from "express";
-import dotenv from "dotenv";
-import mongoose from 'mongoose';
-import Product from './models/product.js';
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+
 const app = express();
+const PORT = 5000;
+
+app.use(cors());
 app.use(express.json());
 
-
-mongoose.connect("mongodb://localhost:27017/node-api-101", {
+mongoose.connect("mongodb://localhost:27017/personsDB", {
   useNewUrlParser: true,
-});
-mongoose.connection.on("error", (err) => {
-  console.error("MongoDB error", err);
+  useUnifiedTopology: true,
 });
 
-app.get("/products", async (req, res) => {
-  const products = await Product.find({});
-  res.json(products);
-});
-app.get("/products/:id", async (req, res) => {
-  const { id } = req.params;
-  const product = await Product.findById(id);
-  res.json(product);
+const personSchema = new mongoose.Schema({
+  name: String,
+  avatar: String,
+  city: String,
+  description: String,
 });
 
-app.post("/products", async (req, res) => {
-  const payload = req.body;
-  const product = new Product(payload);
-  await product.save();
-  res.status(201).end("สร้างสำเร็จ");
+const Person = mongoose.model("Person", personSchema);
+
+app.get("/persons", async (req, res) => {
+  const persons = await Person.find();
+  res.json(persons);
 });
-app.put("/products/:id", async (req, res) => {
-  const payload = req.body;
+
+app.get('/persons/:id', async (req, res) => {
   const { id } = req.params;
 
-  const product = await Product.findByIdAndUpdate(id, { $set: payload });
-  res.json(product);
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({ message: "Invalid ID format" });
+  }
+
+  try {
+    const person = await Person.findById(id);
+    if (!person) {
+      return res.status(404).json({ message: "Person not found" });
+    }
+    res.json(person);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
-app.delete("/products/:id", async (req, res) => {
-  const { id } = req.params;
-
-  await Product.findByIdAndDelete(id);
-  res.status(204).end("ลบสำเร็จ");
+app.post("/persons", async (req, res) => {
+  const newPerson = new Person(req.body);
+  await newPerson.save();
+  res.status(201).json(newPerson);
 });
 
-dotenv.config();
+app.put("/persons/:id", async (req, res) => {
+  try {
+    const existingPerson = await Person.findById(req.params.id);
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+    if (!existingPerson) {
+      return res.status(404).json({ message: "Person not found" });
+    }
+
+    const updatedData = {
+      name: req.body.name || existingPerson.name,
+      avatar: req.body.avatar || existingPerson.avatar,
+      city: req.body.city || existingPerson.city,
+      description: req.body.description || existingPerson.description,
+    };
+
+    const updatedPerson = await Person.findByIdAndUpdate(
+      req.params.id,
+      updatedData,
+      { new: true, runValidators: true }
+    );
+
+    res.json(updatedPerson);
+  } catch (error) {
+    res.status(500).json({ message: "Update failed", error });
+  }
 });
 
-app.listen(5000, () => {
-  console.log("Application is running on port 5000");
+app.delete("/persons/:id", async (req, res) => {
+  await Person.findByIdAndDelete(req.params.id);
+  res.status(204).end();
 });
-const data = {
-  $set: {
-    newValue: "new data",
-  },
-};
-Product.findByIdAndUpdate("ObjectId", data);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
