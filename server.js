@@ -1,10 +1,8 @@
-// server.js
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-// ✅ โหลด .env ก่อนใช้ process.env
 dotenv.config();
 
 const app = express();
@@ -13,12 +11,11 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// ✅ เชื่อม MongoDB
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected!"))
   .catch((err) => console.error("❌ MongoDB error:", err));
 
-// ✅ สร้าง Schema
 const personSchema = new mongoose.Schema({
   name: String,
   avatar: String,
@@ -28,7 +25,6 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model("Person", personSchema);
 
-// ✅ Routes
 app.get("/persons", async (req, res) => {
   const persons = await Person.find();
   res.json(persons);
@@ -58,11 +54,10 @@ app.post("/persons", async (req, res) => {
 
 app.put("/persons/:id", async (req, res) => {
   try {
-    const updated = await Person.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    const updated = await Person.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
     if (!updated) return res.status(404).json({ message: "Not found" });
     res.json(updated);
   } catch (err) {
@@ -75,7 +70,6 @@ app.delete("/persons/:id", async (req, res) => {
   res.status(204).end();
 });
 
-// ✅ Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
