@@ -25,8 +25,6 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model("Person", personSchema);
 
-const API_BASE = import.meta.env.VITE_API_BASE;
-
 app.get("/persons", async (req, res) => {
   const persons = await Person.find();
   res.json(persons);
