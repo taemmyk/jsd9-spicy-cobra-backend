@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema(
     developerAvatar: String,
     publisher: String,
     rating: { type: Number, min: 0, max: 10 }, 
-    price: { type: Number,  },
+    price: { type: Number},
     discountPercentage: Number,
     image_thumbnail: String,
     image_show_1: String,
