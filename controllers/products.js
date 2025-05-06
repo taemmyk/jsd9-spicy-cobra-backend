@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 const router = express.Router();
 
 
-router.get("/", async (req, res) => {
+export const getAllProducts = async (req, res) => {
   const { genre } = req.query;
 
   const query = genre && genre !== "viewall"
@@ -18,19 +18,17 @@ router.get("/", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error fetching products" });
   }
-});
+};
 
-
-router.get("/:id", async (req, res) => {
+export const getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid Product ID" });
     }
 
-    const product = await Product.findById(id); 
+    const product = await Product.findById(id);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -41,14 +39,11 @@ router.get("/:id", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-});
+};
 
-// POS
-router.post("/", async (req, res) => {
+export const newProduct = async (req, res) => {
   try {
-    // สร้างผลิตภัณฑ์ใหม่ โดยไม่ต้องใช้ idify แล้ว
     const newProduct = new Product(req.body);
-
     await newProduct.save();
     res.status(201).json(newProduct);
   } catch (error) {
@@ -58,14 +53,13 @@ router.post("/", async (req, res) => {
     }
     res.status(500).json({ message: "Internal Server Error" });
   }
-});
+};
 
 
-router.put("/:id", async (req, res) => {
+export const updateProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
-
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid Product ID" });
     }
@@ -86,7 +80,7 @@ router.put("/:id", async (req, res) => {
 
     const updatedProduct = await Product.findByIdAndUpdate(id, updatedData, {
       new: true,
-      runValidators: true
+      runValidators: true,
     });
 
     res.json(updatedProduct);
@@ -94,20 +88,19 @@ router.put("/:id", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Update failed", error });
   }
-});
+};
 
-router.delete("/:id", async (req, res) => {
+export const deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
-    
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid Product ID" });
     }
 
-    const product = await Product.findByIdAndDelete(id);
+    const deleted = await Product.findByIdAndDelete(id);
 
-    if (!product) {
+    if (!deleted) {
       return res.status(404).json({ message: "Product not found" });
     }
 
@@ -116,6 +109,7 @@ router.delete("/:id", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-});
+};
+
 
 export default router;

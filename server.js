@@ -2,8 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-
-import productRoute from "./routes/products.js"; 
+import productRoute from "./router/products.js"; 
+import userRoute from "./router/user.js"
+import orderRoute from './router/orders.js';
 
 dotenv.config();
 
@@ -16,7 +17,8 @@ app.use(express.json());
 
 
 app.use("/products", productRoute); 
-
+app.use("/user", userRoute)
+app.use("/orders",orderRoute)
 
 mongoose
   .connect(process.env.MONGO_URI, {
