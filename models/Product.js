@@ -11,9 +11,11 @@ const ProductSchema = new Schema({
   rating: { type: Number, min: 0, max: 5 },
   price: {
     type: Number,
+  },
+  discountPercentage: {
+    type: Number,
     enum: [0, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70],
   },
-  discountPercentage: { type: Number },
   imageThumbnail: { type: String },
   imageSlideshow: [{ type: String }],
 });
