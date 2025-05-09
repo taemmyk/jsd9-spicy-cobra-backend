@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import bcrypt from "bcrypt";
 
 const UserSchema = new Schema({
   username: {
@@ -20,7 +21,7 @@ const UserSchema = new Schema({
   },
   status: { type: Boolean, required: true },
   createdAt: { type: Date, default: new Date().getTime() },
-  LastActive: { type: Date, default: new Date() },
+  lastActive: { type: Date, default: new Date() },
 });
 
 // Hash password before saving
