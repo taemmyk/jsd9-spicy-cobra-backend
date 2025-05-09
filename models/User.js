@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const UserSchema = new Schema({
-  email: {
+  username: {
     type: String,
     required: true,
     unique: true,
@@ -36,7 +36,7 @@ export const User = model("User", UserSchema);
 /*          Example: User Document based on the Schema, from the Chat         */
 /* -------------------------------------------------------------------------- */
 // {
-//     "email": "john.doe@example.com",
+//     "username": "john.doe@example.com",
 //     "password": "hashed_password_here",
 //     "role": "user",
 //     "status": true, // Active or Inactive
