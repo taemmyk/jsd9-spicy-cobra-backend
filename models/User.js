@@ -20,7 +20,7 @@ const UserSchema = new Schema({
   },
   status: { type: Boolean, required: true },
   createdAt: { type: Date, default: new Date().getTime() },
-  LastActive: { type: Date, default: new Date() },
+  lastActive: { type: Date, default: new Date() },
 });
 
 // Hash password before saving
@@ -41,7 +41,7 @@ export const User = model("User", UserSchema);
 //     "role": "user",
 //     "status": true, // Active or Inactive
 //     "createdAt": "2024-07-15T12:00:00.000Z",
-//     "LastActive": "2024-07-15T12:00:00.000Z",
+//     "lastActive": "2024-07-15T12:00:00.000Z",
 //     "_id": "6695cb081234567890abcdef",
 //     "__v": 0
 // }
