@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 const UserSchema = new Schema({
   email: { type: String, unique: true, require: true },
   password: { type: String, require: true },
+  confirmPassword: { type: String, require: true },
   role: { type: [String], enum: ["user", "dev", "admin"], default: "user" },
   status: { type: Boolean, default: true },
   createdOn: { type: Date, default: new Date().getTime() },

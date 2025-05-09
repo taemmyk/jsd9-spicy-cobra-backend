@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 export const authUser = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
-    return res.json({
+    return res.status(400).json({
       success: false,
       message: "Access denied. No Token",
     });

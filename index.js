@@ -1,12 +1,20 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cors from "cors";
 import userRoutes from "./api/v1/userRoutes.js";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const corsOptions = {
+  origin: "http://localhost:5173",
+  // something with jwt ?
+  credentials: true, //this cookie
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/", userRoutes());

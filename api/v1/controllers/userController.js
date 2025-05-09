@@ -5,12 +5,16 @@ import { User } from "../../../models/User.js";
 
 // register a new user controller
 export const createUser = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
+  const { email, password, confirmPassword } = req.body;
+  if (!email || !password || !confirmPassword) {
     res.status(400).json({
       error: true,
       message: "All fields are required",
     });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: "Passwords do not match" });
   }
 
   try {
@@ -22,7 +26,7 @@ export const createUser = async (req, res) => {
       });
     }
 
-    const user = new User({ email, password });
+    const user = new User({ email, password, confirmPassword });
     await user.save();
     res.status(201).json({
       error: false,
@@ -85,4 +89,38 @@ export const loginUser = async (req, res) => {
 // Logout controller
 export const logoutUser = (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
+};
+
+// get users
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort("-createdOn");
+    res.status(200).json({
+      error: false,
+      users,
+      message: "All users retrieved successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: true,
+      message: "Failed to fetch users",
+      details: err.message,
+    });
+  }
+};
+
+// delete a user
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await User.findByIdAndDelete(id);
+    res.status(204).json({ message: "delete a user successfully" }).end();
+  } catch (err) {
+    res.status(500).json({
+      error: true,
+      message: "Failed to delete a user",
+      details: err.message,
+    });
+  }
 };
