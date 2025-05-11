@@ -4,10 +4,9 @@ import express from "express";
 
 const router = express.Router();
 
-
 export const getAlluser = async (req, res) => {
   try {
-    const users = await user.find(); 
+    const users = await user.find();
     res.status(200).json(users);
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -44,7 +43,9 @@ export const newuser = async (req, res) => {
   } catch (error) {
     console.error(error);
     if (error.name === "ValidationError") {
-      return res.status(400).json({ message: "Validation failed", errors: error.errors });
+      return res
+        .status(400)
+        .json({ message: "Validation failed", errors: error.errors });
     }
     res.status(500).json({ message: "Internal Server Error" });
   }
@@ -97,4 +98,13 @@ export const deleteuser = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
+};
+
+export const User = {
+  getAlluser: getAlluser,
+  getuserById: getuserById,
+  newuser: newuser,
+  updateuser: updateuser,
+  deleteuser: deleteuser,
+  
 };

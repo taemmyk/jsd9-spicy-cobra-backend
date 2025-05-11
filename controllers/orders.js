@@ -42,7 +42,9 @@ export const getOrderById = async (req, res) => {
 export const newOrder = async (req, res) => {
   try {
     const neworder = new Order(req.body);
+    
     await neworder.save();
+    
     res.status(201).json(neworder);
   } catch (error) {
     console.error(error);

@@ -1,4 +1,5 @@
 import express from "express"
+
 import {
     getAllOrder,
     getOrderById,
@@ -9,7 +10,7 @@ import {
 
 const router = express.Router()
 
-router.get("/",getAllOrder)
+router.get("/",getAllOrder) 
 router.get("/:id",getOrderById)
 router.post("/",newOrder)
 router.put("/:id",updateOrder)
