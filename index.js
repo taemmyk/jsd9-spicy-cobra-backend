@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import userRoutes from "./api/v1/routes/users.js";
 import genreRoute from "./api/v1/routes/genres.js";
+// import orderRoute from "./api/v1/routes/orders.js";
+import productRoute from "./api/v1/routes/products.js";
 
 dotenv.config();
 const app = express();
@@ -21,6 +23,8 @@ app.use(express.json());
 
 app.use("/users", userRoutes());
 app.use("/genres", genreRoute());
+// app.use("/orders", orderRoute());
+app.use("/products", productRoute());
 
 (async () => {
   try {

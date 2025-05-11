@@ -26,10 +26,6 @@ export default () => {
       return res.status(400).json({ error: "Bad Request", message: "Genre name must be between 2 and 50 characters." });
     }
 
-    if (genreDescription && genreDescription.length > 200) {
-      return res.status(400).json({ error: "Bad Request", message: "Genre description cannot exceed 200 characters." });
-    }
-
     try {
       const newGenre = new Genre({
         genreName,
