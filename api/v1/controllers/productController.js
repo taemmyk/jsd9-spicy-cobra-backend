@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Product } from "../../../models/Product.js";
+import { Genre } from "../../../models/Genre.js";
 
 export const getAllProducts = async (req, res, next) => {
   try {
@@ -30,7 +31,24 @@ export const getProductByProductId = async (req, res, next) => {
   }
 };
 
-export const getProductByGenreId = async (req, res, next) => {
+export const getProductBySlug = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const product = await Product.findOne({ slug }).populate("genres");
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ error: true, message: "Product not found" });
+    }
+
+    res.status(200).json(product);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProductsByGenreId = async (req, res, next) => {
   const { genreId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(genreId)) {
@@ -45,10 +63,63 @@ export const getProductByGenreId = async (req, res, next) => {
   }
 };
 
+export const getProductsByGenreName = async (req, res, next) => {
+  const { genreName } = req.params;
+
+  if (!genreName) {
+    return res
+      .status(400)
+      .json({ error: true, message: "Genre Name is required" });
+  }
+
+  try {
+    const genre = await Genre.findOne({
+      genreName: { $regex: new RegExp(`^${genreName}$`, "i") },
+    });
+
+    if (!genre) {
+      return res
+        .status(404)
+        .json({ error: true, message: `Genre "${genreName}" not found` });
+    }
+
+    const products = await Product.find({ genres: genre._id }).populate(
+      "genres"
+    );
+    res.status(200).json(products);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const searchProducts = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    const query = {};
+
+    if (q) {
+      query.$or = [
+        { title: { $regex: q, $options: "i" } },
+        { genre: { $regex: q, $options: "i" } },
+        { developerName: { $regex: q, $options: "i" } },
+      ];
+    }
+
+    const products = await Product.find(query);
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error searching products:", error);
+    res.status(500).json({ message: "Failed to search products." });
+    next(error);
+  }
+};
+
 export const createProduct = async (req, res, next) => {
   try {
     const {
       title,
+      slug,
       description,
       genres,
       releaseDate,
@@ -62,16 +133,23 @@ export const createProduct = async (req, res, next) => {
       imageSlideshow,
     } = req.body;
 
-    if (!title || !description || !developerName || genres?.length === 0) {
+    if (
+      !title ||
+      !slug ||
+      !description ||
+      !developerName ||
+      genres?.length === 0
+    ) {
       return res.status(400).json({
         error: "Bad Request",
         message:
-          "Title, description, developer, and at least one genre are required.",
+          "Title, slug, description, developer, and at least one genre are required.",
       });
     }
 
     const newProduct = new Product({
       title,
+      slug,
       description,
       genres,
       releaseDate,
@@ -109,6 +187,7 @@ export const updateProductById = async (req, res, next) => {
   try {
     const {
       title,
+      slug,
       description,
       genres,
       releaseDate,
@@ -122,11 +201,17 @@ export const updateProductById = async (req, res, next) => {
       imageSlideshow,
     } = req.body;
 
-    if (!title || !description || !developerName || genres?.length === 0) {
+    if (
+      !title ||
+      !slug ||
+      !description ||
+      !developerName ||
+      genres?.length === 0
+    ) {
       return res.status(400).json({
         error: "Bad Request",
         message:
-          "Title, description, developer, and at least one genre are required.",
+          "Title, slug, description, developer, and at least one genre are required.",
       });
     }
 
@@ -145,6 +230,7 @@ export const updateProductById = async (req, res, next) => {
       id,
       {
         title,
+        slug,
         description,
         genres,
         releaseDate,

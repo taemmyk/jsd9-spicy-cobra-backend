@@ -2,7 +2,10 @@ import express from "express";
 import {
   getAllProducts,
   getProductByProductId,
-  getProductByGenreId,
+  getProductBySlug,
+  getProductsByGenreId,
+  getProductsByGenreName,
+  searchProducts,
   createProduct,
   updateProductById,
   deleteProductById,
@@ -12,9 +15,14 @@ const router = express.Router();
 
 router.get("/", getAllProducts);
 
+router.get("/search", searchProducts);
+
 router.get("/:id", getProductByProductId);
 
-router.get("/genre/:genreId", getProductByGenreId);
+router.get("/game/:slug", getProductBySlug);
+
+// router.get("/genre/:genreId", getProductsByGenreId);
+router.get("/genre/:genreName", getProductsByGenreName);
 
 router.post("/", createProduct);
 
