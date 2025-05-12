@@ -3,7 +3,7 @@ import {
   getAllAdminInvites,
   getAdminInviteByEmail,
   createAdminInvite,
-} from "../controllers/invitedAdminsController.js";
+} from "../controllers/invitedAdminController.js";
 const router = express.Router();
 
 // get invited admin data by email
