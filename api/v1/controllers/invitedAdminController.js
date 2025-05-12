@@ -1,4 +1,4 @@
-import { InvitedAdmin } from "../../../models/User-invited-admins.js";
+import { InvitedAdmin } from "../../../models/Invitedadmin.js";
 
 export const getAllAdminInvites = async (req, res, next) => {
   try {
