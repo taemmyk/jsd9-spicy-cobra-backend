@@ -10,7 +10,7 @@ export const getAllProducts = async (req, res, next) => {
   }
 };
 
-export const getProductById = async (req, res, next) => {
+export const getProductByProductId = async (req, res, next) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -25,6 +25,21 @@ export const getProductById = async (req, res, next) => {
     }
 
     res.status(200).json(product);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProductByGenreId = async (req, res, next) => {
+  const { genreId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(genreId)) {
+    return res.status(400).json({ error: "Invalid Genre ID" });
+  }
+
+  try {
+    const products = await Product.find({ genres: genreId }).populate("genres");
+    res.status(200).json(products);
   } catch (error) {
     next(error);
   }

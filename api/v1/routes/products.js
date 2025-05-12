@@ -1,7 +1,8 @@
 import express from "express";
 import {
   getAllProducts,
-  getProductById,
+  getProductByProductId,
+  getProductByGenreId,
   createProduct,
   updateProductById,
   deleteProductById,
@@ -11,7 +12,9 @@ const router = express.Router();
 
 router.get("/", getAllProducts);
 
-router.get("/:id", getProductById);
+router.get("/:id", getProductByProductId);
+
+router.get("/genre/:genreId", getProductByGenreId);
 
 router.post("/", createProduct);
 
