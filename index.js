@@ -2,10 +2,12 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
+import errorHandler from "./middleware/errorHandler.js"
 import userRoutes from "./api/v1/routes/users.js";
 import genreRoute from "./api/v1/routes/genres.js";
 // import orderRoute from "./api/v1/routes/orders.js";
 import productRoute from "./api/v1/routes/products.js";
+import invitedAdmins from "./api/v1/routes/invitedAdmins.js";
 
 dotenv.config();
 const app = express();
@@ -22,6 +24,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/users", userRoutes());
+app.use("/admin/invite", invitedAdmins());
 app.use("/genres", genreRoute());
 // app.use("/orders", orderRoute());
 app.use("/products", productRoute());
@@ -35,6 +38,8 @@ app.use("/products", productRoute());
     process.exit(1);
   }
 })();
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
