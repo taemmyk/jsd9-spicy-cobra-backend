@@ -9,13 +9,14 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.CLIENT_URL, // URL ของ Frontend
   // something with jwt ?
   credentials: true, //this cookie
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Middleware สำหรับ form-urlencoded
 
 app.use("/", userRoutes());
 app.get("/", (req, res) => {
@@ -24,7 +25,7 @@ app.get("/", (req, res) => {
 
 (async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to Mongo Database");
   } catch (error) {
     console.log(`MongoDB connection error ${error}`);
