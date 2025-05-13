@@ -4,8 +4,9 @@ import mongoose from "mongoose";
 export const getAllOrder = async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("user_id", "name email") // แสดงเฉพาะ name และ email ของ user
-      .populate("product_id", "title price"); // แสดงเฉพาะ title และ price ของ product
+      .populate("user_id", "name email")
+      .populate("total_price","order_id")
+      
 
     res.status(200).json(orders);
   } catch (error) {
@@ -13,7 +14,6 @@ export const getAllOrder = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 export const getOrderById = async (req, res) => {
   const { id } = req.params;
@@ -25,7 +25,7 @@ export const getOrderById = async (req, res) => {
 
     const order = await Order.findById(id)
       .populate("user_id", "name email")
-      .populate("product_id", "title price");
+      .populate("total_price","order_id");
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
@@ -38,22 +38,30 @@ export const getOrderById = async (req, res) => {
   }
 };
 
-
 export const newOrder = async (req, res) => {
   try {
-    const neworder = new Order(req.body);
-    
-    await neworder.save();
-    
-    res.status(201).json(neworder);
+    const newOrder = new Order({
+      user_id: req.user.id,
+      product_id: req.body.product_id,
+      total_price: req.body.total_price,
+      order_id:req.body.order_id,
+      
+
+    });
+
+    await newOrder.save();
+    res.status(201).json(newOrder);
   } catch (error) {
     console.error(error);
     if (error.name === "ValidationError") {
-      return res.status(400).json({ message: "Validation failed", errors: error.errors });
+      return res
+        .status(400)
+        .json({ message: "Validation failed", errors: error.errors });
     }
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 export const updateOrder = async (req, res) => {
   const { id } = req.params;
@@ -74,8 +82,10 @@ export const updateOrder = async (req, res) => {
       total_price: req.body.total_price || existingorder.total_price,
       status: req.body.status || existingorder.status,
       payment_method: req.body.payment_method || existingorder.payment_method,
-      transaction_date: req.body.transaction_date || existingorder.transaction_date,
-      download_status: req.body.download_status || existingorder.download_status,
+      transaction_date:
+        req.body.transaction_date || existingorder.transaction_date,
+      download_status:
+        req.body.download_status || existingorder.download_status,
     };
 
     const updatedorder = await Order.findByIdAndUpdate(id, updatedData, {

@@ -25,6 +25,7 @@ export const register = async (req, res) => {
       });
     }
 
+
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await collection.insertOne({
@@ -50,7 +51,7 @@ export const register = async (req, res) => {
     console.error("Register error:", error);
     res.json({
       success: false,
-      message: "Register failed",
+      message: "Register failed ", 
     });
   }
 };

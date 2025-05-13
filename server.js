@@ -2,12 +2,16 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-
+import orderItemsRoute from "./router/order_items.js";
 import productRoute from "./router/products.js";
 import orderRoute from "./router/orders.js";
 import userRoute from "./router/user.js";
 import loginRoute from "./router/login.js";
-import {authenticate} from "./middleware/auth.js"
+import { verifyAuthToken } from './middleware/auth.js';
+
+
+
+
 dotenv.config();
 
 const app = express();
@@ -23,11 +27,12 @@ app.use(express.json());
 // app.use(authenticate)
 
 // Routes
-app.use("/products", authenticate,productRoute);
-app.use("/orders",authenticate, orderRoute);
-app.use("/user", userRoute);
+app.use("/products",productRoute);
+app.use("/orders", verifyAuthToken, orderRoute);
+app.use("/user",verifyAuthToken, userRoute);
 app.use("/auth", loginRoute); 
 app.use("/", loginRoute); 
+app.use("/order_items",verifyAuthToken,orderItemsRoute);
 
 mongoose
   .connect(process.env.MONGO_URI, {})

@@ -1,43 +1,11 @@
 {
-<<<<<<< HEAD
-  "name": "jsd9",
-  "version": "1.0.0",
-=======
   "name": "spicy-cobra",
   "version": "1.0.0",
   "description": "",
->>>>>>> 4f6f800940bf0c1d7d59044ac5086036ebd34e94
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-<<<<<<< HEAD
-    "start": "node server.js"
-  },
-  "author": "toey-jsd9",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "axios": "^1.8.4",
-    "bcrypt": "^5.1.1",
-    "body-parser": "^2.2.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.16.0",
-    "mongoose": "^8.13.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ToeyJSD9/backend.git"
-  },
-  "keywords": [],
-  "bugs": {
-    "url": "https://github.com/ToeyJSD9/backend/issues"
-  },
-  "homepage": "https://github.com/ToeyJSD9/backend#readme"
-=======
     "dev": "node --watch index.js"
   },
   "repository": {
@@ -59,7 +27,7 @@
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.14.1"
+    "mongoose": "^8.14.1",
+    "uuid": "^11.1.0"
   }
->>>>>>> 4f6f800940bf0c1d7d59044ac5086036ebd34e94
 }

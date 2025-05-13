@@ -1,12 +1,12 @@
-import user from "../models/user.js";
-import mongoose from "mongoose";
-import express from "express";
 
-const router = express.Router();
+import mongoose from "mongoose";
+
+import{ User }from "../models/user.js"
+// const router = express.Router();
 
 export const getAlluser = async (req, res) => {
   try {
-    const users = await user.find();
+    const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -22,7 +22,7 @@ export const getuserById = async (req, res) => {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const userData = await user.findById(id);
+    const userData = await User.findById(id);
 
     if (!userData) {
       return res.status(404).json({ message: "user not found" });
@@ -37,7 +37,7 @@ export const getuserById = async (req, res) => {
 
 export const newuser = async (req, res) => {
   try {
-    const newuser = new user(req.body);
+    const newuser = new User(req.body);
     await newuser.save();
     res.status(201).json(newuser);
   } catch (error) {
@@ -59,7 +59,7 @@ export const updateuser = async (req, res) => {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const existinguser = await user.findById(id);
+    const existinguser = await User.findById(id);
 
     if (!existinguser) {
       return res.status(404).json({ message: "user not found" });
@@ -87,7 +87,7 @@ export const deleteuser = async (req, res) => {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const deleted = await user.findByIdAndDelete(id);
+    const deleted = await User.findByIdAndDelete(id);
 
     if (!deleted) {
       return res.status(404).json({ message: "user not found" });
@@ -100,11 +100,11 @@ export const deleteuser = async (req, res) => {
   }
 };
 
-export const User = {
-  getAlluser: getAlluser,
-  getuserById: getuserById,
-  newuser: newuser,
-  updateuser: updateuser,
-  deleteuser: deleteuser,
+// export const User = {
+//   getAlluser: getAlluser,
+//   getuserById: getuserById,
+//   newuser: newuser,
+//   updateuser: updateuser,
+//   deleteuser: deleteuser,
   
-};
+// };

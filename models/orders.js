@@ -3,21 +3,11 @@ import mongoose from "mongoose";
 const orderSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // อ้างอิง collection User
-    required: false,
-  },
-  product_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Product", // อ้างอิง collection Product
-    required: false,
-  },
-  quantity: {
-    type: Number,
-    default: 1,
+    ref: "User",
+    required: true, // อย่าลืมให้มัน required จริง
   },
   total_price: {
     type: mongoose.Types.Decimal128,
-    required: false,
   },
   status: {
     type: String,
@@ -26,7 +16,7 @@ const orderSchema = new mongoose.Schema({
   },
   payment_method: {
     type: String,
-    enum: ["credit_card",  "qrcode"],
+    enum: ["credit_card", "qrcode"],
     default: null,
   },
   transaction_date: {
@@ -37,13 +27,10 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  // download_status: {
-  //   type: String,
-  //   enum: ["not_downloaded", "downloaded"],
-  //   default: "not_downloaded",
-  // },
 });
 
-const Order = mongoose.model("Order", orderSchema);
 
+
+const Order = mongoose.model("Order", orderSchema);
 export default Order;
+

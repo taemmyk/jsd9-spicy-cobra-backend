@@ -1,5 +1,5 @@
 import express from "express"
-
+import verifyToken from "../middleware/verifyToken.js"
 import {
     getAllOrder,
     getOrderById,
@@ -10,7 +10,7 @@ import {
 
 const router = express.Router()
 
-router.get("/",getAllOrder) 
+router.get("/",getAllOrder,verifyToken) 
 router.get("/:id",getOrderById)
 router.post("/",newOrder)
 router.put("/:id",updateOrder)
