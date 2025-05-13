@@ -7,7 +7,7 @@ import userRoutes from "./api/v1/userRoutes.js";
 import productRoutes from "./api/v1/routes/products.js";
 import genreRoutes from "./api/v1/routes/genres.js";
 import orderRoutes from "./api/v1/routes/orders.js";
-import orderItemRoutes from "./api/v1/routes/Items.js";
+import itemRoutes from "./api/v1/routes/Items.js";
 
 dotenv.config();
 const app = express();
@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 3001;
 
 const corsOptions = {
   origin: process.env.CLIENT_URL, // URL ของ Frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   // something with jwt ?
   credentials: true, //this cookie
 };
@@ -27,7 +28,7 @@ app.use("/", userRoutes());
 app.use("/products", productRoutes());
 app.use("/genres", genreRoutes());
 app.use("/orders", orderRoutes());
-app.use("/orderitems", orderItemRoutes());
+app.use("/items", itemRoutes());
 app.get("/", (req, res) => {
   res.send("HOME PAGE");
 });
