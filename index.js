@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import errorHandler from "./middleware/errorHandler.js"
 import userRoutes from "./api/v1/userRoutes.js";
+import productRoutes from "./api/v1/routes/products.js";
+import genreRoutes from "./api/v1/routes/genres.js";
 
 dotenv.config();
 const app = express();
@@ -19,6 +21,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/", userRoutes());
+app.use("/products", productRoutes());
+app.use("/genres", genreRoutes());
 app.get("/", (req, res) => {
   res.send("HOME PAGE");
 });
