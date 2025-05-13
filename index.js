@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
+import errorHandler from "./middleware/errorHandler.js"
 import userRoutes from "./api/v1/userRoutes.js";
 
 dotenv.config();
@@ -31,6 +32,8 @@ app.get("/", (req, res) => {
     process.exit(1);
   }
 })();
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
