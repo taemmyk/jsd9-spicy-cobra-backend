@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { User } from "../../../models/User.js";
+import { InvitedAdmin } from "../../../models/Invitedadmin.js";
 
 // register a new user controller
 export const createUser = async (req, res) => {
@@ -28,11 +29,17 @@ export const createUser = async (req, res) => {
       });
     }
 
-    const user = new User({ email, password});
+    const invitedAdmin = await InvitedAdmin.findOne({ email });
+    let role = "user";
+    if (invitedAdmin) {
+      role = "admin";
+    }
+
+    const user = new User({ email, password, role, status: true });
     await user.save();
     return res.status(201).json({
       error: false,
-      message: "User register succussfully",
+      message: "User register successfully",
     });
   } catch (err) {
     return res.status(500).json({
@@ -61,9 +68,9 @@ export const loginUser = async (req, res) => {
         message: "Invalid credentials - user not found!",
       });
     }
-     // 👇 ใส่ log ตรงนี้เพื่อ debug
-     console.log("Password from form:", password);
-     console.log("Password in DB:", user.password);
+    // 👇 ใส่ log ตรงนี้เพื่อ debug
+    console.log("Password from form:", password);
+    console.log("Password in DB:", user.password);
 
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("Match:", isMatch);
@@ -131,7 +138,7 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-// forgot password 
+// forgot password
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -146,13 +153,14 @@ export const forgotPassword = async (req, res) => {
     if (!user) {
       return res.status(200).json({
         error: true,
-        message: "If the email exists, a reset link has been sent."
+        message: "If the email exists, a reset link has been sent.",
       });
     }
 
-
     // Create reset token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
     user.resetPasswordToken = token;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hr
     await user.save();
@@ -168,7 +176,6 @@ export const forgotPassword = async (req, res) => {
         refreshToken: process.env.REFRESH_TOKEN,
       },
     });
-
 
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
     const mailOptions = {
@@ -198,5 +205,5 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-// Reset Password 
+// Reset Password
 export const resetPassword = async (req, res) => {};
