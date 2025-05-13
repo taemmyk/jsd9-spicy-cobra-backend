@@ -1,7 +1,13 @@
 import { Schema, model } from "mongoose";
 
 const GenreSchema = new Schema({
-  genreName: { type: String, required: true },
+  genreName: {
+    type: String,
+    required: true,
+    unique: true,
+    minlength: [2, "Genre name must be at least 3 characters long"],
+    maxlength: [50, "Genre name cannot exceed 50 characters"],
+  },
   genreDescription: { type: String, required: true },
 });
 

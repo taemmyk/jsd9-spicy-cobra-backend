@@ -16,7 +16,7 @@ const UserSchema = new Schema({
 // Hash password before saving
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-
+  
   // salt => กำหนดให้เข้ารหัสกี่รอบ ปกติ 10 รอบ
   this.password = await bcrypt.hash(this.password, 10);
   next();

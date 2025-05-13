@@ -39,7 +39,6 @@ router.delete("/auth/users/:id", deleteUser);
 // forgot password
 router.post("/auth/forgot-password", forgotPasswordLimiter, forgotPassword);
 
-
 // reset password
 router.post("/auth/reset-password/:token", resetPassword);
 
