@@ -37,6 +37,11 @@ export const createUser = async (req, res) => {
 
     const user = new User({ email, password, role, status: true });
     await user.save();
+
+    if (invitedAdmin) {
+      await InvitedAdmin.findOneAndUpdate({ email }, { Status: true });
+    }
+
     return res.status(201).json({
       error: false,
       message: "User register successfully",

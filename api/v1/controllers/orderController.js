@@ -6,7 +6,13 @@ export const getAllOrder = async (req, res, next) => {
   try {
     const orders = await Order.find()
       .populate("user", "username email")
-      .populate("product", "name price");
+      .populate({
+        path: "items",
+        populate: {
+          path: "product",
+          select: "title price", // Select the fields you want from the Product model
+        },
+      });
     res.status(200).json({ error: false, data: orders });
   } catch (error) {
     next(error);
@@ -33,26 +39,34 @@ export const getOrderById = async (req, res, next) => {
 
 export const createOrder = async (req, res, next) => {
   const user = req.user.user._id;
-  const { orderNumber, products, totalPrice, orderStatus, paymentMethod } =
+  const { products, totalPrice, paymentMethod } =
     req.body;
 
   try {
     if (
-      !orderNumber ||
       !user ||
       !products ||
       !Array.isArray(products) ||
       products.length === 0 ||
       totalPrice === undefined ||
-      totalPrice === null ||
-      !orderStatus
+      totalPrice === null
     ) {
       return res.status(400).json({
         error: true,
         message:
-          "Please provide orderNumber, products (as an array with productId and sellPrice), totalPrice, and orderStatus",
+          "Please provide products (as an array with productId and sellPrice), totalPrice, and orderStatus",
       });
     }
+
+     // Query จำนวน Order ทั้งหมด
+    const orderCount = await Order.countDocuments();
+
+    // สร้าง Order Number
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    const nextNumber = (orderCount + 1).toString().padStart(4, "0");
+    const orderNumber = `${year}${month}-${nextNumber}`;
 
     const createdItemsData = [];
 
@@ -81,7 +95,6 @@ export const createOrder = async (req, res, next) => {
       orderNumber,
       user,
       totalPrice,
-      orderStatus,
       paymentMethod,
       items: [],
     });
@@ -156,6 +169,15 @@ export const updateOrderById = async (req, res, next) => {
     }
 
     res.status(200).json({ error: false, data: updatedOrder });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getOrderCount = async (req, res, next) => {
+  try {
+    const count = await Order.countDocuments();
+    res.status(200).json({ error: false, count });
   } catch (error) {
     next(error);
   }

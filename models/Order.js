@@ -9,6 +9,7 @@ const OrderSchema = new Schema({
     type: String,
     required: true,
     enum: ["Pending", "Paid", "Cancelled"],
+    default: "Pending",
   },
   paymentMethod: { type: String, enum: ["Credit Card", "QR"] },
   orderAt: { type: Date, default: new Date().getTime() },
