@@ -6,6 +6,8 @@ import errorHandler from "./middleware/errorHandler.js"
 import userRoutes from "./api/v1/userRoutes.js";
 import productRoutes from "./api/v1/routes/products.js";
 import genreRoutes from "./api/v1/routes/genres.js";
+import orderRoutes from "./api/v1/routes/orders.js";
+import orderItemRoutes from "./api/v1/routes/Items.js";
 
 dotenv.config();
 const app = express();
@@ -24,6 +26,8 @@ app.use(express.urlencoded({ extended: true })); // Middleware สำหรั�
 app.use("/", userRoutes());
 app.use("/products", productRoutes());
 app.use("/genres", genreRoutes());
+app.use("/orders", orderRoutes());
+app.use("/orderitems", orderItemRoutes());
 app.get("/", (req, res) => {
   res.send("HOME PAGE");
 });
