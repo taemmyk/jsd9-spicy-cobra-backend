@@ -5,6 +5,7 @@ import {
   logoutUser,
   getUsers,
   deleteUser,
+  profileUser,
 } from "../controllers/userController.js";
 import { authUser } from "../../../middleware/auth.js";
 import { User } from "../../../models/User.js";
@@ -25,5 +26,7 @@ router.get("/auth/users", getUsers);
 
 // delete a user
 router.delete("/auth/users/:id", deleteUser);
+
+router.get("/profile",authUser,profileUser);
 
 export default router;
