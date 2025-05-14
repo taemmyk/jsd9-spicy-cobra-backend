@@ -10,7 +10,7 @@ export const getAllOrder = async (req, res, next) => {
         path: "items",
         populate: {
           path: "product",
-          select: "title price", // Select the fields you want from the Product model
+          select: "title price",
         },
       });
     res.status(200).json({ error: false, data: orders });
@@ -19,7 +19,7 @@ export const getAllOrder = async (req, res, next) => {
   }
 };
 
-export const getOrderById = async (req, res, next) => {
+export const getOrderByOrderId = async (req, res, next) => {
   const { id } = req.params;
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -37,10 +37,55 @@ export const getOrderById = async (req, res, next) => {
   }
 };
 
+export const getOrderByUserId = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const orders = await Order.find({ user: id }).populate({
+      path: "items",
+      populate: {
+        path: "product",
+        select: "title",
+      },
+    });
+    res.status(200).json({
+      error: false,
+      total: orders.length,
+      data: orders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPaidOrderProductsByUserId = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const paidOrders = await Order.find({ user: id, orderStatus: "Paid" })
+      .select(
+        "-orderNumber -user -totalPrice -orderStatus -paymentMethod -orderAt -transactionAt"
+      )
+      .populate({
+        path: "items",
+        populate: {
+          path: "product",
+          select: "title imageThumbnail developerName",
+        },
+      })
+      .sort({ orderAt: -1 });
+
+    res.status(200).json({
+      error: false,
+      total: paidOrders.length,
+      data: paidOrders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createOrder = async (req, res, next) => {
   const user = req.user.user._id;
-  const { products, totalPrice, paymentMethod } =
-    req.body;
+  const { products, totalPrice, paymentMethod } = req.body;
 
   try {
     if (
@@ -58,7 +103,7 @@ export const createOrder = async (req, res, next) => {
       });
     }
 
-     // Query จำนวน Order ทั้งหมด
+    // Query จำนวน Order ทั้งหมด
     const orderCount = await Order.countDocuments();
 
     // สร้าง Order Number

@@ -1,7 +1,9 @@
 import express from "express";
 import {
   getAllOrder,
-  getOrderById,
+  getOrderByOrderId,
+  getOrderByUserId,
+  getPaidOrderProductsByUserId,
   createOrder,
   updateOrderById,
   getOrderCount,
@@ -13,7 +15,9 @@ const router = express.Router();
 router.get("/count", getOrderCount);
 
 router.get("/", getAllOrder);
-router.get("/:id", getOrderById);
+router.get("/user/:id", authUser, getOrderByUserId);
+router.get("/games/:id", authUser, getPaidOrderProductsByUserId);
+router.get("/:id", getOrderByOrderId);
 router.post("/", authUser, createOrder);
 router.patch("/:id", authUser, updateOrderById);
 
