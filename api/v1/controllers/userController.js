@@ -78,7 +78,7 @@ export const loginUser = async (req, res) => {
     console.log("Password in DB:", user.password);
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Match:", isMatch);
+    console.log("Match:", isMatch);// check if password is correct
     if (!isMatch) {
       return res.status(401).json({
         error: true,
@@ -86,7 +86,7 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -248,5 +248,75 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-// Reset Password
-export const resetPassword = async (req, res) => {};
+// Reset Password 
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        error: true,
+        message: "Invalid or expired token",
+      });
+    }
+
+    // Update password
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).json({
+      error: false,
+      message: "Password reset successful",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: true,
+      message: "Error resetting password",
+      details: err.message,
+    });
+  }
+};
+
+//update password a user
+export const updatePasswordUser = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const email = req.user.email;
+  const user = await User.findOne({ email });
+  console.log(user);
+  if (!user) {
+    return res.status(404).json({
+      error: false,
+      message: "User not found",
+    });
+  }
+  const userMatch = await bcrypt.compare(currentPassword, user.password);
+  console.log(userMatch);
+  if (!userMatch) {
+    return res.status(400).json({
+      error: false,
+      message: "Current password is incorrect",
+    });
+  }
+  try {
+    user.password = newPassword;
+    await user.save();
+    res.status(200).json({
+      error: false,
+      message: "update password successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: true,
+      message: "Failed to update password",
+      details: err.error,
+    });
+  }
+};
