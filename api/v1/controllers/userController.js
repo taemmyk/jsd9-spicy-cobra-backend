@@ -143,6 +143,19 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+export const profileUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.user._id).select("-password"); // exclude password
+    if (!user) {
+      return res.status(404).json({ error: true, message: "User not found" });
+    }
+    res.status(200).json({ error: false, user });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ err: true, message: "/profile/err" });
+  }
+};
+
 // ban user
 export const updateUserStatus = async (req, res) => {
   try {

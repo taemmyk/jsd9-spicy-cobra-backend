@@ -4,6 +4,7 @@ import {
   loginUser,
   logoutUser,
   getUsers,
+  profileUser,
   deleteUser, updateUserStatus,
   forgotPassword,
   resetPassword,
@@ -36,6 +37,8 @@ router.get("/auth/users", getUsers);
 
 // delete a user
 router.delete("/auth/users/:id", deleteUser);
+
+router.get("/profile",authUser,profileUser);
 
 // ban user
 router.patch("/auth/status/:id", authUser, updateUserStatus);
