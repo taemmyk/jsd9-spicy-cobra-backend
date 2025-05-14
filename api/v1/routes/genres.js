@@ -6,12 +6,13 @@ import {
   updateGenreDetailById,
   deleteGenreById,
 } from "../controllers/genreController.js";
+import { authUser } from "../../../middleware/auth.js";
 
 const router = express.Router();
 router.get("/", getAllGenres);
 router.get("/:genreId", getGenreById);
-router.post("/", createGenre);
-router.put("/:genreId", updateGenreDetailById);
-router.delete("/:genreId", deleteGenreById);
+router.post("/", authUser, createGenre);
+router.put("/:genreId", authUser, updateGenreDetailById);
+router.delete("/:genreId", authUser, deleteGenreById);
 
 export default () => router;

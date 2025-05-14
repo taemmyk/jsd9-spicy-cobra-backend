@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { User } from "../../../models/User.js";
+import { InvitedAdmin } from "../../../models/Invitedadmin.js";
 
 // register a new user controller
 export const createUser = async (req, res) => {
@@ -28,11 +29,22 @@ export const createUser = async (req, res) => {
       });
     }
 
-    const user = new User({ email, password });
+    const invitedAdmin = await InvitedAdmin.findOne({ email });
+    let role = "user";
+    if (invitedAdmin) {
+      role = "admin";
+    }
+
+    const user = new User({ email, password, role, status: true });
     await user.save();
+
+    if (invitedAdmin) {
+      await InvitedAdmin.findOneAndUpdate({ email }, { Status: true });
+    }
+
     return res.status(201).json({
       error: false,
-      message: "User register succussfully",
+      message: "User register successfully",
     });
   } catch (err) {
     return res.status(500).json({
@@ -74,7 +86,7 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -131,7 +143,45 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-// forgot password 
+// ban user
+export const updateUserStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (typeof status !== "boolean") {
+      return res.status(400).json({
+        error: "Invalid input",
+        message: "Status must be a boolean value (true or false).",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((el) => el.message);
+      return res
+        .status(400)
+        .json({ error: "Validation Error", messages: errors });
+    } else {
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", message: error.message });
+    }
+  }
+};
+
+// forgot password
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -146,13 +196,14 @@ export const forgotPassword = async (req, res) => {
     if (!user) {
       return res.status(200).json({
         error: true,
-        message: "If the email exists, a reset link has been sent."
+        message: "If the email exists, a reset link has been sent.",
       });
     }
 
-
     // Create reset token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
     user.resetPasswordToken = token;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hr
     await user.save();
@@ -168,7 +219,6 @@ export const forgotPassword = async (req, res) => {
         refreshToken: process.env.REFRESH_TOKEN,
       },
     });
-
 
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
     const mailOptions = {
@@ -270,42 +320,3 @@ export const updatePasswordUser = async (req, res) => {
     });
   }
 };
-
-// // check password
-// export const checkPasswordUser = async (req, res) => {
-//   const { email, currentPassword } = req.body;
-//   const user = await User.findById(email);
-//   if (!user) {
-//     return res.status(404).json({ message: "User not found" });
-//   }
-//   const isMatch = await bcrypt.compare(currentPassword, user.password);
-//   if (!isMatch) {
-//     return res.status(400).json({ message: "Incorrect current password" });
-//   }
-//   res.status(200).json({ message: "Password verified" });
-// };
-
-// // update password
-// export const updatePasswordUser = async (req, res) => {
-//   const {  newPassword } = req.body;
-//   // const userId = req.user?.id;
-
-//   // if (!userId) {
-//   //   return res.status(400).json({ message: "User ID is required" });
-//   // }
-
-//   try {
-//     const user = await User.findById(token);
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     user.password = newPassword;
-//     await user.save();
-
-//     res.status(200).json({ message: "Password updated successfully" });
-//   } catch (error) {
-//     console.error("Error updating password:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
