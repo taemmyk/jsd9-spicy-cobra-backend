@@ -235,77 +235,77 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// update password a user
-// export const updatePasswordUser = async (req, res) => {
-//   const { currentPassword, newPassword } = req.body;
-//   const email = req.user.email;
-//   const user = await User.findOne({ email });
-//   console.log(user);
-//   if (!user) {
-//     return res.status(404).json({
-//       error: false,
-//       message: "User not found",
-//     });
-//   }
-//   const userMatch = await bcrypt.compare(currentPassword, user.password);
-//   console.log(userMatch);
-//   if (!userMatch) {
-//     return res.status(400).json({
-//       error: false,
-//       message: "Current password is incorrect",
-//     });
-//   }
-//   try {
-//     user.password = newPassword;
-//     await user.save();
-//     res.status(200).json({
-//       error: false,
-//       message: "update password successfully",
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       error: true,
-//       message: "Failed to update password",
-//       details: err.error,
-//     });
-//   }
-// };
-
-// check password
-export const checkPasswordUser = async (req, res) => {
-  const { email, currentPassword } = req.body;
-  const user = await User.findById(email);
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
-  const isMatch = await bcrypt.compare(currentPassword, user.password);
-  if (!isMatch) {
-    return res.status(400).json({ message: "Incorrect current password" });
-  }
-  res.status(200).json({ message: "Password verified" });
-};
-
-// update password
+//update password a user
 export const updatePasswordUser = async (req, res) => {
-  const {  newPassword } = req.body;
-  // const userId = req.user?.id;
-
-  // if (!userId) {
-  //   return res.status(400).json({ message: "User ID is required" });
-  // }
-
+  const { currentPassword, newPassword } = req.body;
+  const email = req.user.email;
+  const user = await User.findOne({ email });
+  console.log(user);
+  if (!user) {
+    return res.status(404).json({
+      error: false,
+      message: "User not found",
+    });
+  }
+  const userMatch = await bcrypt.compare(currentPassword, user.password);
+  console.log(userMatch);
+  if (!userMatch) {
+    return res.status(400).json({
+      error: false,
+      message: "Current password is incorrect",
+    });
+  }
   try {
-    const user = await User.findById(token);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
     user.password = newPassword;
     await user.save();
-
-    res.status(200).json({ message: "Password updated successfully" });
-  } catch (error) {
-    console.error("Error updating password:", error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(200).json({
+      error: false,
+      message: "update password successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: true,
+      message: "Failed to update password",
+      details: err.error,
+    });
   }
 };
+
+// // check password
+// export const checkPasswordUser = async (req, res) => {
+//   const { email, currentPassword } = req.body;
+//   const user = await User.findById(email);
+//   if (!user) {
+//     return res.status(404).json({ message: "User not found" });
+//   }
+//   const isMatch = await bcrypt.compare(currentPassword, user.password);
+//   if (!isMatch) {
+//     return res.status(400).json({ message: "Incorrect current password" });
+//   }
+//   res.status(200).json({ message: "Password verified" });
+// };
+
+// // update password
+// export const updatePasswordUser = async (req, res) => {
+//   const {  newPassword } = req.body;
+//   // const userId = req.user?.id;
+
+//   // if (!userId) {
+//   //   return res.status(400).json({ message: "User ID is required" });
+//   // }
+
+//   try {
+//     const user = await User.findById(token);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     user.password = newPassword;
+//     await user.save();
+
+//     res.status(200).json({ message: "Password updated successfully" });
+//   } catch (error) {
+//     console.error("Error updating password:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };

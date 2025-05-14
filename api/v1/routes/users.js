@@ -7,7 +7,6 @@ import {
   deleteUser,
   forgotPassword,
   resetPassword,
-  checkPasswordUser,
   updatePasswordUser
 } from "../controllers/userController.js";
 import { authUser } from "../../../middleware/auth.js";
@@ -44,8 +43,6 @@ router.post("/auth/forgot-password", forgotPasswordLimiter, forgotPassword);
 // reset password
 router.post("/auth/reset-password/:token", resetPassword);
 
-router.post("/auth/verify-password", authUser, checkPasswordUser);
-
-router.put("/auth/update-password", authUser, updatePasswordUser);
+router.post("/auth/users/update-password", authUser, updatePasswordUser);
 
 export default router;
