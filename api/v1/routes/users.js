@@ -4,7 +4,7 @@ import {
   loginUser,
   logoutUser,
   getUsers,
-  deleteUser,
+  deleteUser, updateUserStatus,
   forgotPassword,
   resetPassword,
 } from "../controllers/userController.js";
@@ -35,6 +35,9 @@ router.get("/auth/users", getUsers);
 
 // delete a user
 router.delete("/auth/users/:id", deleteUser);
+
+// ban user
+router.patch("/auth/status/:id", updateUserStatus);
 
 // forgot password
 router.post("/auth/forgot-password", forgotPasswordLimiter, forgotPassword);

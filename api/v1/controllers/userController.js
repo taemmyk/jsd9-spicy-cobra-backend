@@ -37,6 +37,11 @@ export const createUser = async (req, res) => {
 
     const user = new User({ email, password, role, status: true });
     await user.save();
+
+    if (invitedAdmin) {
+      await InvitedAdmin.findOneAndUpdate({ email }, { Status: true });
+    }
+
     return res.status(201).json({
       error: false,
       message: "User register successfully",
@@ -135,6 +140,44 @@ export const deleteUser = async (req, res) => {
       message: "Failed to delete a user",
       details: err.message,
     });
+  }
+};
+
+// ban user
+export const updateUserStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (typeof status !== "boolean") {
+      return res.status(400).json({
+        error: "Invalid input",
+        message: "Status must be a boolean value (true or false).",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((el) => el.message);
+      return res
+        .status(400)
+        .json({ error: "Validation Error", messages: errors });
+    } else {
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", message: error.message });
+    }
   }
 };
 
