@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { User } from "../models/User.js";
 
 export const authUser = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -10,7 +11,10 @@ export const authUser = async (req, res, next) => {
   }
   try {
     const decoded_token = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { user: { _id: decoded_token.userId } };
+    req.user = {
+      user: { _id: decoded_token.userId },
+      email: decoded_token.email,
+    };
     next();
   } catch (err) {
     const isExpired = err.name === "TokenExpiredError";

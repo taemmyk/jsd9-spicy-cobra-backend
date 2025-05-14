@@ -19,7 +19,7 @@ router.get("/search", searchProducts);
 
 router.get("/:id", getProductByProductId);
 
-router.get("/game/:slug", getProductBySlug);
+router.get("/games/:slug", getProductBySlug);
 
 // router.get("/genre/:genreId", getProductsByGenreId);
 router.get("/genre/:genreName", getProductsByGenreName);
