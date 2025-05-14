@@ -37,7 +37,7 @@ router.get("/auth/users", getUsers);
 router.delete("/auth/users/:id", deleteUser);
 
 // ban user
-router.patch("/auth/status/:id", updateUserStatus);
+router.patch("/auth/status/:id", authUser, updateUserStatus);
 
 // forgot password
 router.post("/auth/forgot-password", forgotPasswordLimiter, forgotPassword);

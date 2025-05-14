@@ -14,10 +14,10 @@ const router = express.Router();
 
 router.get("/count", getOrderCount);
 
-router.get("/", getAllOrder);
+router.get("/", authUser, getAllOrder);
 router.get("/user/:id", authUser, getOrderByUserId);
 router.get("/games/:id", authUser, getPaidOrderProductsByUserId);
-router.get("/:id", getOrderByOrderId);
+router.get("/:id", authUser, getOrderByOrderId);
 router.post("/", authUser, createOrder);
 router.patch("/:id", authUser, updateOrderById);
 
