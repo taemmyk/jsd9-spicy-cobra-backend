@@ -10,6 +10,7 @@ import {
   updateProductById,
   deleteProductById,
 } from "../controllers/productController.js";
+import { authUser } from "../../../middleware/auth.js";
 
 const router = express.Router();
 
@@ -19,15 +20,15 @@ router.get("/search", searchProducts);
 
 router.get("/:id", getProductByProductId);
 
-router.get("/game/:slug", getProductBySlug);
+router.get("/games/:slug", getProductBySlug);
 
 // router.get("/genre/:genreId", getProductsByGenreId);
 router.get("/genre/:genreName", getProductsByGenreName);
 
-router.post("/", createProduct);
+router.post("/", authUser, createProduct);
 
-router.put("/:id", updateProductById);
+router.put("/:id", authUser, updateProductById);
 
-router.delete("/:id", deleteProductById);
+router.delete("/:id", authUser, deleteProductById);
 
 export default () => router;
