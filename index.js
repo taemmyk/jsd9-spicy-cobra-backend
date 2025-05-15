@@ -15,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const corsOptions = {
-  origin: process.env.CLIENT_URL, // URL ของ Frontend
+  origin: [process.env.CLIENT_URL, "https://jsd9-spicy-cobra-frontend.vercel.app"], // URL ของ Frontend
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   // something with jwt ?
   credentials: true, //this cookie
