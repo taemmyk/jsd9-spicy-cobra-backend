@@ -158,26 +158,19 @@ export const profileUser = async (req, res) => {
 
 // ban user
 export const updateUserStatus = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    const { status } = req.body;
+    const user = await User.findById(id);
 
-    if (typeof status !== "boolean") {
-      return res.status(400).json({
-        error: "Invalid input",
-        message: "Status must be a boolean value (true or false).",
-      });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { status },
+      { status: !user.status },
       { new: true, runValidators: true }
     );
-
-    if (!updatedUser) {
-      return res.status(404).json({ error: "User not found" });
-    }
 
     res.status(200).json(updatedUser);
   } catch (error) {
