@@ -22,7 +22,8 @@ router.get("/:id", getProductByProductId);
 
 router.get("/games/:slug", getProductBySlug);
 
-// router.get("/genre/:genreId", getProductsByGenreId);
+router.get("/genre/id/:genreId", getProductsByGenreId);
+
 router.get("/genre/:genreName", getProductsByGenreName);
 
 router.post("/", authUser, createProduct);
