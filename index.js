@@ -25,6 +25,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.set("trust proxy", true);
 app.use(limiter); // Middleware for rate limiting
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Middleware สำหรับ form-urlencoded
