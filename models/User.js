@@ -1,47 +1,25 @@
 import { Schema, model } from "mongoose";
+import bcrypt from "bcrypt";
 
 const UserSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: [6, "Password must be at least 6 characters long"],
-  },
-  role: {
-    type: String,
-    required: true,
-    default: "user",
-    enum: ["user", "admin"],
-  },
-  status: { type: Boolean, required: true },
-  createdAt: { type: Date, default: new Date().getTime() },
-  lastActive: { type: Date, default: new Date() },
+  email: { type: String, unique: true, require: true },
+  password: { type: String, require: true },
+  // confirmPassword: { type: String, require: true },
+  role: { type: String, enum: ["user", "dev", "admin"], default: "user" },
+  status: { type: Boolean, default: true },
+  createdOn: { type: Date, default: new Date().getTime() },
+  lastlogin: { type: Date, default: new Date().getTime() },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 });
 
 // Hash password before saving
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
+  
+  // salt => กำหนดให้เข้ารหัสกี่รอบ ปกติ 10 รอบ
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
 export const User = model("User", UserSchema);
-
-/* -------------------------------------------------------------------------- */
-/*          Example: User Document based on the Schema, from the Chat         */
-/* -------------------------------------------------------------------------- */
-// {
-//     "username": "john.doe@example.com",
-//     "password": "hashed_password_here",
-//     "role": "user",
-//     "status": true, // Active or Inactive
-//     "createdAt": "2024-07-15T12:00:00.000Z",
-//     "lastActive": "2024-07-15T12:00:00.000Z",
-//     "_id": "6695cb081234567890abcdef",
-//     "__v": 0
-// }
