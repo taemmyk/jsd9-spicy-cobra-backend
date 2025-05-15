@@ -74,11 +74,11 @@ export const loginUser = async (req, res) => {
       });
     }
     // 👇 ใส่ log ตรงนี้เพื่อ debug
-    console.log("Password from form:", password);
-    console.log("Password in DB:", user.password);
+    // console.log("Password from form:", password);
+    // console.log("Password in DB:", user.password);
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Match:", isMatch);// check if password is correct
+    // console.log("Match:", isMatch);// check if password is correct
     if (!isMatch) {
       return res.status(401).json({
         error: true,
@@ -151,7 +151,7 @@ export const profileUser = async (req, res) => {
     }
     res.status(200).json({ error: false, user });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({ err: true, message: "/profile/err" });
   }
 };
@@ -296,7 +296,7 @@ export const updatePasswordUser = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const email = req.user.email;
   const user = await User.findOne({ email });
-  console.log(user);
+  // console.log(user);
   if (!user) {
     return res.status(404).json({
       error: false,
@@ -304,7 +304,7 @@ export const updatePasswordUser = async (req, res) => {
     });
   }
   const userMatch = await bcrypt.compare(currentPassword, user.password);
-  console.log(userMatch);
+  // console.log(userMatch);
   if (!userMatch) {
     return res.status(400).json({
       error: false,

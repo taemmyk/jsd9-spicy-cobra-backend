@@ -9,7 +9,7 @@ import { authUser } from "../../../middleware/auth.js";
 const router = express.Router();
 
 // get invited admin data by email
-router.get("/:email", getAdminInviteByEmail);
+router.get("/:email", authUser, getAdminInviteByEmail);
 
 // get all invited admins list
 router.get("/", authUser, getAllAdminInvites);

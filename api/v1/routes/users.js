@@ -5,21 +5,20 @@ import {
   logoutUser,
   getUsers,
   profileUser,
-  deleteUser, updateUserStatus,
+  deleteUser,
+  updateUserStatus,
   forgotPassword,
   resetPassword,
-  updatePasswordUser
+  updatePasswordUser,
 } from "../controllers/userController.js";
 import { authUser } from "../../../middleware/auth.js";
-import { User } from "../../../models/User.js";
 import rateLimit from "express-rate-limit";
 
 const forgotPasswordLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 mins
   max: 5, // reset password 5 times
-  message: "Too many password reset requests, please try again later."
+  message: "Too many password reset requests, please try again later.",
 });
-
 
 const router = express.Router();
 
@@ -33,12 +32,12 @@ router.post("/auth/login", loginUser);
 router.post("/auth/logout", logoutUser);
 
 // get users
-router.get("/auth/users", getUsers);
+router.get("/auth/users", authUser, getUsers);
 
 // delete a user
-router.delete("/auth/users/:id", deleteUser);
+router.delete("/auth/users/:id", authUser, deleteUser);
 
-router.get("/profile",authUser,profileUser);
+router.get("/profile", authUser, profileUser);
 
 // ban user
 router.patch("/auth/status/:id", authUser, updateUserStatus);

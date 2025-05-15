@@ -12,7 +12,8 @@ export const getAllOrder = async (req, res, next) => {
           path: "product",
           select: "title price",
         },
-      });
+      })
+      .sort({ orderAt: -1 });
     res.status(200).json({ error: false, data: orders });
   } catch (error) {
     next(error);
